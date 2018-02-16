@@ -9,9 +9,11 @@ from keras import backend as keras
 from unet_dnn.data import *
 
 class myUnet(object):
-    def __init__(self,):
+    def __init__(self,results_path="../results"):
         self.img_rows = None
         self.img_cols = None
+        self.results_path = results_path.rstrip("/")
+        self.img_type = None
 
     def load_data(self,mydata):
         self.img_cols = mydata.out_cols
@@ -146,6 +148,7 @@ class myUnet(object):
         return model
 
     def train(self,myData):
+        self.img_type = myData.img_type
 
         print("loading data")
         imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
@@ -159,7 +162,7 @@ class myUnet(object):
 
         print('predict test data')
         imgs_mask_test = model.predict(imgs_test, batch_size=1, verbose=1)
-        np.save('../results/imgs_mask_test.npy', imgs_mask_test)
+        np.save(self.results_path +'/imgs_mask_test.npy', imgs_mask_test)
 
     def save_img(self):
 
@@ -168,7 +171,7 @@ class myUnet(object):
         for i in range(imgs.shape[0]):
             img = imgs[i]
             img = array_to_img(img)
-            img.save("../results/%d.jpg"%(i))
+            img.save(self.results_path + "/" + str(i) + "." + self.img_type)
 
 if __name__ == '__main__':
     myunet = myUnet()
