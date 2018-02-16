@@ -145,10 +145,10 @@ class myUnet(object):
 
         return model
 
-    def train(self):
+    def train(self,myData):
 
         print("loading data")
-        imgs_train, imgs_mask_train, imgs_test = self.load_data()
+        imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
         print("loading data done")
         model = self.get_unet()
         print("got unet")
