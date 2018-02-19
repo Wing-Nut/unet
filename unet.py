@@ -180,11 +180,16 @@ class myUnet(object):
         # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
 
         print("array to image")
-        # imgs = np.load('imgs_mask_test.npy')
-        for i,f in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
+        # imgs = p.load('imgs_mask_test.npy')
+        for i,full_path in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
             img = imgs_mask[i]
             img = array_to_img(img)
-            img.save(self.results_path + "/" + str(i) + "." + myData.img_type)
+
+            assert isinstance(full_path,str)
+            # extract just the file name (not the path)
+            f = full_path[full_path.rindex("/"):]
+
+            img.save(self.results_path + f)
 
 if __name__ == '__main__':
     myunet = myUnet()
