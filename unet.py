@@ -5,8 +5,9 @@ from keras.models import *
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
 from keras.optimizers import *
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from keras import backend as keras
 from unet_dnn.data import *
+from keras.preprocessing.image import array_to_img
+import glob
 
 class myUnet(object):
     def __init__(self,results_path="../results"):
@@ -14,6 +15,8 @@ class myUnet(object):
         self.img_cols = None
         self.results_path = results_path.rstrip("/")
         self.img_type = None
+
+        self.model = None
 
     def load_data(self,mydata):
         self.img_cols = mydata.out_cols
@@ -148,30 +151,40 @@ class myUnet(object):
         return model
 
     def train(self,myData):
-        self.img_type = myData.img_type
+        # self.img_type = myData.img_type
 
         print("loading data")
         imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
         print("loading data done")
-        model = self.get_unet()
+        self.model = self.get_unet()
         print("got unet")
 
         model_checkpoint = ModelCheckpoint('unet.hdf5', monitor='loss',verbose=1, save_best_only=True)
         print('Fitting model...')
-        model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=10, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
+        self.model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=10, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
+
+    def predict_and_save(self, myData,my_set="test"):
+
+        imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
 
         print('predict test data')
-        imgs_mask_test = model.predict(imgs_test, batch_size=1, verbose=1)
-        np.save(self.results_path +'/imgs_mask_test.npy', imgs_mask_test)
+        imgs_mask = None
+        data_path = None
+        if my_set == "test":
+            imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
+            data_path = myData.test_path
+        else:
+            imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
+            data_path = myData.train_path
 
-    def save_img(self):
+        # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
 
         print("array to image")
-        imgs = np.load('imgs_mask_test.npy')
-        for i in range(imgs.shape[0]):
-            img = imgs[i]
+        # imgs = np.load('imgs_mask_test.npy')
+        for i,f in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
+            img = imgs_mask[i]
             img = array_to_img(img)
-            img.save(self.results_path + "/" + str(i) + "." + self.img_type)
+            img.save(self.results_path + "/" + str(i) + "." + myData.img_type)
 
 if __name__ == '__main__':
     myunet = myUnet()
