@@ -150,7 +150,7 @@ class myUnet(object):
 
         return model
 
-    def train(self,myData):
+    def train(self,myData,nb_epoch=10):
         # self.img_type = myData.img_type
 
         print("loading data")
@@ -161,7 +161,7 @@ class myUnet(object):
 
         model_checkpoint = ModelCheckpoint('unet.hdf5', monitor='loss',verbose=1, save_best_only=True)
         print('Fitting model...')
-        self.model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=10, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
+        self.model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=nb_epoch, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
 
     def predict_and_save(self, myData,my_set="test"):
 
