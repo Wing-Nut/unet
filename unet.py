@@ -3,9 +3,9 @@ import os
 import numpy as np
 from keras.models import *
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
-from keras.optimizers import *
+from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from unet_dnn.data import *
+from unet_dnn.data import Model
 from keras.preprocessing.image import array_to_img
 import glob
 
@@ -175,7 +175,7 @@ class myUnet(object):
             data_path = myData.test_path
         else:
             imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
-            data_path = myData.train_path
+            data_path = myData.data_path
 
         # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
 
