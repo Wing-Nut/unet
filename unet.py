@@ -152,7 +152,7 @@ class myUnet(object):
         # self.img_type = myData.img_type
 
         print("loading data")
-        imgs_train, imgs_mask_train, _ = self.load_training_data(myData)
+        imgs_train, imgs_mask_train = self.load_training_data(myData)
         print("loading data done")
         self.model = self.get_unet()
         print("got unet")
