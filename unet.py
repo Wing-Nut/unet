@@ -1,11 +1,10 @@
 import os 
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
-from keras.models import *
+from keras.models import Model,Input
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from unet_dnn.data import Model
 from keras.preprocessing.image import array_to_img
 import glob
 
