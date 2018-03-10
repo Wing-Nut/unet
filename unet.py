@@ -191,6 +191,22 @@ class myUnet(object):
 
             img.save(self.results_path + f)
 
+    def predict(self,image):
+        out_rows,out_cols = image.shape[:2]
+
+        # convert it into a format we are used to using
+        imgdatas = np.ndarray((1, out_rows, out_cols, 1), dtype=np.uint8)
+        imgdatas[0] = image
+
+        imgdatas = imgdatas.astype('float32')
+        imgdatas /= 255
+
+        imgs_mask = self.model.predict(imgdatas, batch_size=1, verbose=1)
+
+        return imgs_mask
+
+
+
 if __name__ == '__main__':
     myunet = myUnet()
     myunet.train()
