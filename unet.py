@@ -17,13 +17,12 @@ class myUnet(object):
 
         self.model = None
 
-    def load_data(self,mydata):
-        self.img_cols = mydata.out_cols
-        self.img_rows = mydata.out_rows
+    def load_training_data(self,mydata_object):
+        self.img_cols = mydata_object.out_cols
+        self.img_rows = mydata_object.out_rows
 
-        imgs_train, imgs_mask_train = mydata.load_train_data()
-        imgs_test = mydata.load_test_data()
-        return imgs_train, imgs_mask_train, imgs_test
+        imgs_train, imgs_mask_train = mydata_object.load_train_data()
+        return imgs_train, imgs_mask_train
 
     def get_unet(self):
 
@@ -153,7 +152,7 @@ class myUnet(object):
         # self.img_type = myData.img_type
 
         print("loading data")
-        imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
+        imgs_train, imgs_mask_train, _ = self.load_training_data(myData)
         print("loading data done")
         self.model = self.get_unet()
         print("got unet")
