@@ -148,7 +148,7 @@ class myUnet(object):
 
         return model
 
-    def train(self,myData,nb_epoch=10):
+    def train(self,myData,nb_epoch=5):
         # self.img_type = myData.img_type
 
         print("loading data")
@@ -161,7 +161,7 @@ class myUnet(object):
         print('Fitting model...')
         self.model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=nb_epoch, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
 
-        self.model.save("/home/ubuntu/mymodel")
+        # self.model.save("/home/ubuntu/mymodel")
 
     # def predict_and_save(self, myData,results_path,my_set="test"):
     #
