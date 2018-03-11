@@ -193,11 +193,11 @@ class myUnet(object):
 
     def predict(self,image,myData=None,nb_epoc=20):
         try:
-            model = load_model("/home/ubuntu/mymodel")
+            model = load_model("/home/ubuntu/unet.hdf5")
         except:
             assert myData is not None
             self.train(myData,nb_epoch=nb_epoc)
-            model = load_model("/home/ubuntu/mymodel")
+            model = load_model("/home/ubuntu/unet.hdf5")
 
         out_rows,out_cols = image.shape[:2]
 
