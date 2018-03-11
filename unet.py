@@ -5,14 +5,14 @@ from keras.models import Model,Input
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from keras.preprocessing.image import array_to_img
-import glob
+# from keras.preprocessing.image import array_to_img
+# import glob
+from keras.models import load_model
 
 class myUnet(object):
-    def __init__(self,results_path="../results"):
+    def __init__(self):
         self.img_rows = None
         self.img_cols = None
-        self.results_path = results_path.rstrip("/")
         self.img_type = None
 
         self.model = None
@@ -161,45 +161,54 @@ class myUnet(object):
         print('Fitting model...')
         self.model.fit(imgs_train, imgs_mask_train, batch_size=4, nb_epoch=nb_epoch, verbose=1,validation_split=0.2, shuffle=True, callbacks=[model_checkpoint])
 
-    def predict_and_save(self, myData,my_set="test"):
+        self.model.save("/home/ubuntu/mymodel")
 
-        imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
+    # def predict_and_save(self, myData,results_path,my_set="test"):
+    #
+    #     imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
+    #
+    #     print('predict test data')
+    #     imgs_mask = None
+    #     data_path = None
+    #     if my_set == "test":
+    #         imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
+    #         data_path = myData.test_path
+    #     else:
+    #         imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
+    #         data_path = myData.data_path
+    #
+    #     # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
+    #
+    #     print("array to image")
+    #     # imgs = p.load('imgs_mask_test.npy')
+    #     for i,full_path in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
+    #         img = imgs_mask[i]
+    #         img = array_to_img(img)
+    #
+    #         assert isinstance(full_path,str)
+    #         # extract just the file name (not the path)
+    #         f = full_path[full_path.rindex("/"):]
+    #
+    #         img.save(self.results_path + f)
 
-        print('predict test data')
-        imgs_mask = None
-        data_path = None
-        if my_set == "test":
-            imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
-            data_path = myData.test_path
-        else:
-            imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
-            data_path = myData.data_path
+    def predict(self,image,myData=None,nb_epoc=20):
+        try:
+            model = load_model("/home/ubuntu/mymodel")
+        except:
+            assert myData is not None
+            self.train(myData,nb_epoch=nb_epoc)
+            model = load_model("/home/ubuntu/mymodel")
 
-        # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
-
-        print("array to image")
-        # imgs = p.load('imgs_mask_test.npy')
-        for i,full_path in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
-            img = imgs_mask[i]
-            img = array_to_img(img)
-
-            assert isinstance(full_path,str)
-            # extract just the file name (not the path)
-            f = full_path[full_path.rindex("/"):]
-
-            img.save(self.results_path + f)
-
-    def predict(self,image):
         out_rows,out_cols = image.shape[:2]
 
         # convert it into a format we are used to using
         imgdatas = np.ndarray((1, out_rows, out_cols, 1), dtype=np.uint8)
         imgdatas[0] = image
 
-        imgdatas = imgdatas.astype('float32')
-        imgdatas /= 255
+        # todo - might not be necessary but keep in for now
+        imgdatas = imgdatas.astype(int)
 
-        imgs_mask = self.model.predict(imgdatas, batch_size=1, verbose=1)
+        imgs_mask = model.predict(imgdatas, batch_size=1, verbose=1)
 
         return imgs_mask
 
