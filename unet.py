@@ -5,7 +5,7 @@ from keras.models import Model,Input
 from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropout, Cropping2D
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-# from keras.preprocessing.image import array_to_img
+from keras.preprocessing.image import array_to_img
 # import glob
 from keras.models import load_model
 
@@ -208,7 +208,7 @@ class myUnet(object):
         imgdatas = imgdatas.astype('float32')
         imgdatas /= 255
 
-        imgs_mask = model.predict(imgdatas, batch_size=1, verbose=1)
+        imgs_mask = array_to_img(model.predict(imgdatas, batch_size=1, verbose=1))
 
         return imgs_mask
 
