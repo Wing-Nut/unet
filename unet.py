@@ -205,8 +205,8 @@ class myUnet(object):
         imgdatas = np.ndarray((1, out_rows, out_cols, 1), dtype=np.uint8)
         imgdatas[0] = image
 
-        # todo - might not be necessary but keep in for now
-        imgdatas = imgdatas.astype(int)
+        imgdatas = imgdatas.astype('float32')
+        imgdatas /= 255
 
         imgs_mask = model.predict(imgdatas, batch_size=1, verbose=1)
 
