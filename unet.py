@@ -208,7 +208,7 @@ class myUnet(object):
         imgdatas = imgdatas.astype('float32')
         imgdatas /= 255
 
-        imgs_mask = array_to_img(model.predict(imgdatas, batch_size=1, verbose=1))
+        imgs_mask = array_to_img(model.predict(imgdatas, batch_size=1, verbose=1)[0,:,:,:])
 
         return imgs_mask
 
