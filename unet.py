@@ -213,7 +213,8 @@ class myUnet(object):
 
         # convert it into a format we are used to using
         imgdatas = np.ndarray((1, out_rows, out_cols, 1), dtype=np.uint8)
-        imgdatas[0] = image
+
+        imgdatas[0] = image.reshape((image.shape[0],image.shape[1],1))
 
         imgdatas = imgdatas.astype('float32')
         imgdatas /= 255
