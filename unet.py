@@ -6,16 +6,22 @@ from keras.layers import Input, merge, Conv2D, MaxPooling2D, UpSampling2D, Dropo
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.preprocessing.image import array_to_img
-# import glob
+import glob
 from keras.models import load_model
+from skimage.io import imread,imsave
 
 class myUnet(object):
-    def __init__(self):
+    def __init__(self,results_path):
         self.img_rows = None
         self.img_cols = None
         self.img_type = None
 
-        self.model = None
+        try:
+            self.model = load_model("/home/ubuntu/unet.hdf5")
+        except:
+            self.model = None
+
+        self.results_path = results_path
 
     def load_training_data(self,mydata_object):
         self.img_cols = mydata_object.out_cols
@@ -191,13 +197,17 @@ class myUnet(object):
     #
     #         img.save(self.results_path + f)
 
-    def predict(self,image,myData=None,nb_epoc=20):
-        try:
-            model = load_model("/home/ubuntu/unet.hdf5")
-        except:
-            assert myData is not None
-            self.train(myData,nb_epoch=nb_epoc)
-            model = load_model("/home/ubuntu/unet.hdf5")
+    def predict_directory(self,data_path,img_type):
+        for subject in glob.glob(data_path + "/*." + img_type):
+            subject_name = subject[subject.rfind("/")+1:]
+            image = imread(subject)
+
+            prediction = self.predict(image)
+            imsave("/home/ubuntu/results/"+subject_name,prediction)
+
+
+    def predict(self,image):
+        assert self.model is not None
 
         out_rows,out_cols = image.shape[:2]
 
@@ -208,9 +218,9 @@ class myUnet(object):
         imgdatas = imgdatas.astype('float32')
         imgdatas /= 255
 
-        imgs_mask = array_to_img(model.predict(imgdatas, batch_size=1, verbose=1)[0,:,:,:])
+        mask = self.model.predict(imgdatas, batch_size=1, verbose=1)[0,:,:,:]
 
-        return imgs_mask
+        return mask
 
 
 
