@@ -189,7 +189,7 @@ class myUnet(object):
 
         print("array to image")
         # imgs = p.load('imgs_mask_test.npy')
-        for i,full_path in enumerate(glob.glob(data_path  +"/*."+data_path.img_type)):
+        for i,full_path in enumerate(glob.glob(data_path  +"/*."+mydata.img_type)):
             img = imgs_mask[i]
             img = array_to_img(img)
 
