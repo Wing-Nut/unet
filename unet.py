@@ -169,50 +169,52 @@ class myUnet(object):
 
         # self.model.save("/home/ubuntu/mymodel")
 
-    # def predict_and_save(self, myData,results_path,my_set="test"):
-    #
-    #     imgs_train, imgs_mask_train, imgs_test = self.load_data(myData)
-    #
-    #     print('predict test data')
-    #     imgs_mask = None
-    #     data_path = None
-    #     if my_set == "test":
-    #         imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
-    #         data_path = myData.test_path
-    #     else:
-    #         imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
-    #         data_path = myData.data_path
-    #
-    #     # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
-    #
-    #     print("array to image")
-    #     # imgs = p.load('imgs_mask_test.npy')
-    #     for i,full_path in enumerate(glob.glob(data_path  +"/*."+myData.img_type)):
-    #         img = imgs_mask[i]
-    #         img = array_to_img(img)
-    #
-    #         assert isinstance(full_path,str)
-    #         # extract just the file name (not the path)
-    #         f = full_path[full_path.rindex("/"):]
-    #
-    #         img.save(self.results_path + f)
 
-    def predict_test_cases(self,mydata):
-        mydata.create_test_data()
-        test_images = mydata.load_test_data()
 
-        imgs_test = self.model.predict(test_images, batch_size=1, verbose=1)
+    def predict_and_save(self, mydata,my_set="test"):
+        imgs_train, imgs_mask_train = mydata.load_train_data()
+        imgs_test = mydata.load_test_data()
 
-        imgs_mask_test = self.model.predict(imgs_test, batch_size=1, verbose=1)
+        print('predict test data')
+        imgs_mask = None
+        data_path = None
+        if my_set == "test":
+            imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
+            data_path = data_path.test_path
+        else:
+            imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
+            data_path = data_path.data_path
 
-        np.save('./results/imgs_mask_test.npy', imgs_mask_test)
+        # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
 
         print("array to image")
-        imgs = np.load('./results/imgs_mask_test.npy')
-        for i in range(imgs.shape[0]):
-            img = imgs[i]
+        # imgs = p.load('imgs_mask_test.npy')
+        for i,full_path in enumerate(glob.glob(data_path  +"/*."+data_path.img_type)):
+            img = imgs_mask[i]
             img = array_to_img(img)
-            img.save("./results/%d.png" % (i))
+
+            assert isinstance(full_path,str)
+            # extract just the file name (not the path)
+            f = full_path[full_path.rindex("/"):]
+
+            img.save(self.results_path + f)
+
+    # def predict_test_cases(self,mydata):
+    #     mydata.create_test_data()
+    #     test_images = mydata.load_test_data()
+    #
+    #
+    #
+    #     imgs_mask_test = self.model.predict(imgs_test, batch_size=1, verbose=1)
+    #
+    #     np.save('./results/imgs_mask_test.npy', imgs_mask_test)
+    #
+    #     print("array to image")
+    #     imgs = np.load('./results/imgs_mask_test.npy')
+    #     for i in range(imgs.shape[0]):
+    #         img = imgs[i]
+    #         img = array_to_img(img)
+    #         img.save("./results/%d.png" % (i))
 
 
     def predict(self,image):
