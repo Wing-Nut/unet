@@ -208,7 +208,7 @@ class myUnet(object):
         np.save('./results/imgs_mask_test.npy', imgs_mask_test)
 
         print("array to image")
-        imgs = np.load('imgs_mask_test.npy')
+        imgs = np.load('./results/imgs_mask_test.npy')
         for i in range(imgs.shape[0]):
             img = imgs[i]
             img = array_to_img(img)
