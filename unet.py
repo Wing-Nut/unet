@@ -180,10 +180,10 @@ class myUnet(object):
         data_path = None
         if my_set == "test":
             imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
-            data_path = data_path.test_path
+            data_path = mydata.test_path
         else:
             imgs_mask = self.model.predict(imgs_train, batch_size=1, verbose=1)
-            data_path = data_path.data_path
+            data_path = mydata.data_path
 
         # np.save(self.results_path +'/imgs_mask_'+my_set+'.npy', imgs_mask)
 
