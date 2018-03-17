@@ -197,13 +197,22 @@ class myUnet(object):
     #
     #         img.save(self.results_path + f)
 
-    def predict_directory(self,data_path,img_type):
-        for subject in glob.glob(data_path + "/*." + img_type):
-            subject_name = subject[subject.rfind("/")+1:]
-            image = imread(subject)
+    def predict_test_cases(self,mydata):
+        mydata.create_test_data()
+        test_images = mydata.load_test_data()
 
-            prediction = self.predict(image)
-            imsave("/home/ubuntu/results/"+subject_name,prediction)
+        imgs_test = self.model.predict(test_images, batch_size=1, verbose=1)
+
+        imgs_mask_test = self.model.predict(imgs_test, batch_size=1, verbose=1)
+
+        np.save('../results/imgs_mask_test.npy', imgs_mask_test)
+
+        print("array to image")
+        imgs = np.load('imgs_mask_test.npy')
+        for i in range(imgs.shape[0]):
+            img = imgs[i]
+            img = array_to_img(img)
+            img.save("../results/%d.jpg" % (i))
 
 
     def predict(self,image):
