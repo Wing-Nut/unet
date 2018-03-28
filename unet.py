@@ -114,8 +114,8 @@ class myUnet(object):
         imgs_test = mydata.load_test_data()
 
         print('predict test data')
-        imgs_mask = None
-        data_path = None
+        print(imgs_train.shape)
+        print(imgs_test.shape)
         if my_set == "test":
             imgs_mask = self.model.predict(imgs_test, batch_size=1, verbose=1)
             data_path = mydata.test_path
